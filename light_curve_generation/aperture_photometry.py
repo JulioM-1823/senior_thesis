@@ -486,8 +486,8 @@ def photometry_extractor(image, error_image, sat, star_pos, model_fwhm, units, g
     else:
         r_aperture = 1.5*model_fwhm
     
-    skyin  = r_aperture + 1
-    skyout = skyin + 2
+    skyin  = r_aperture + 5
+    skyout = skyin + 10
 
     # Create circular apertures and annuli with the specifed radii
     starapertures = CircularAperture(star_pos0, r=r_aperture)
@@ -503,8 +503,8 @@ def photometry_extractor(image, error_image, sat, star_pos, model_fwhm, units, g
     final_sum = (phot_table['aperture_sum_0'] - bkg_starap_sum)
     
     # Calculate the error on the photometry
-    bkg_mean_err = phot_table['aperture_sum_err_1'] / skyannuli.area
-    bkg_sum_err  = bkg_mean_err * starapertures.area
+    bkg_mean_err = phot_table['aperture_sum_err_1']/skyannuli.area
+    bkg_sum_err  = bkg_mean_err*starapertures.area
 
     # True if used ghost
     if (sat == 'Y'):
@@ -529,7 +529,10 @@ def photometry_extractor(image, error_image, sat, star_pos, model_fwhm, units, g
         
         # True if you want to print the values
         if (print_values == True):
-            print(''.join(['Flux = ', f'{int(float(return_sum)):,.0f}', ' +/- ', f'{int(float(noise)):,.0f} ', units, '\n']))
+            if (np.isnan(noise) == True):
+                print(''.join(['Flux = ', f'{int(float(return_sum)):,.0f}', ' +/- NaN \n']))
+            else:
+                print(''.join(['Flux = ', f'{int(float(return_sum)):,.0f}', ' +/- ', f'{int(float(noise)):,.0f} ', units, '\n']))
 
     return [float(return_sum), float(noise)]
 
@@ -877,10 +880,15 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
         clean_ratio = [np.nan if i > 2*np.nanmedian(ratio) else i for i in ratio]
 
         # Create mask for the cleaned data
-        mask = clean_ratio/clean_ratio
+        mask = np.array(clean_ratio)/np.array(clean_ratio)
+
+        # Empty list for cleaned data storage
+        clean_data = []
 
         # Apply mask to all the new data
-        clean_data = [variable*mask if variable else variable for variable in dummy_data]
+        for variable in dummy_data:
+            clean_variable = variable*mask
+            clean_data.append(clean_variable)
         
         ###############################################################
         #             END OF OUTLIER REMOVAL SECTION                  #
@@ -890,10 +898,10 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
         data = [line_r*mask, cont_r*mask, line_peak*mask, cont_peak*mask, line_flux*mask, cont_flux*mask, peak_ratio*mask, clean_ratio]
 
         # Calculate the mean, median, and std of the data
-        median = np.nanmedian(ratio)
-        std = np.nanstd(ratio)
-        peak_median = np.nanmedian(peak_ratio)
-        peak_std = np.nanstd(peak_ratio)
+        median = np.nanmedian(clean_data[13])
+        std = np.nanstd(clean_data[13])
+        peak_median = np.nanmedian(clean_data[12])
+        peak_std = np.nanstd(clean_data[12])
 
         # Write data to a dictionary
         inner_dict = {               'time (minutes)':  clean_data[0], 
@@ -1087,12 +1095,12 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
             stat_dataframe = concat([dataframe, info], axis = 1)
 
             # Write the statsistics to a dataframe
-            stat_dataframe.to_csv(dataframedir + object_name + '/' + date + '/' + object_name + '_' + date + '_Photometric_Statistics.csv', index = False)
+            stat_dataframe.to_csv(''.join([dataframedir, object_name, '/', date, '/', object_name, '_', date, '_Photometric_Statistics.csv']), index = False)
 
             # Save the data and break the loop after we're done with the single dataset
             print('Done Extracting Photometry! \n')
             print(''.join(['The dictionary with your data lives in ', dataframedir, '\n']))
-            print('The Dataframe with your statistics lives in ' + dataframedir + '\n')
+            print(''.join(['The Dataframe with your statistics lives in ', dataframedir, '\n']))
             print('_' * 100, '\n')
 
             # Save the photometric data for that specific dataset
@@ -1106,11 +1114,11 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
     stat_dataframe = concat([dataframe, info], axis = 1)
 
     # Save the dataframe as a .csv
-    stat_dataframe.to_csv(dataframedir + 'GAPlanetS_Photometric_Statistics.csv', index = False)
+    stat_dataframe.to_csv(''.join([dataframedir, 'GAPlanetS_Photometric_Statistics.csv']), index = False)
 
     print('Done Extracting Photometry for all of the Datasets! \n')
     print(''.join(['The dictionary with your data lives in ', dataframedir, '\n']))
-    print('The Dataframe with your statistics lives in ' + dataframedir + '\n')
+    print(''.join(['The Dataframe with your statistics lives in ', dataframedir, '\n']))
     print('_' * 100, '\n')
     
     return np.save(''.join([dataframedir, 'GAPlanetS_Survey_Photometric_Data.npy']), dictionary)

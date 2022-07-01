@@ -1,8 +1,7 @@
 # Import all the toys
 !pip install photutils
 !pip install plottify
-!pip install lightkurve
-!pip install matplotlib --upgrade
+!pip install --upgrade matplotlib
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,7 +13,6 @@ plt.rcParams['font.family'] = 'monospace'
 plt.rcParams['font.monospace'] = 'DejaVu Sans Mono'
 sb.set_context("talk")
 
-from lightkurve import LightCurve
 from cmath import sqrt
 from pandas import DataFrame, read_csv, concat
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -100,7 +98,7 @@ def pad_to_square(image, pad_value=0):
     m = image.reshape((image.shape[0], -1))
 
     # Pad the image
-    padded = pad_value * np.ones(2 * [max(m.shape)], dtype = m.dtype)
+    padded = pad_value*np.ones(2*[max(m.shape)], dtype = m.dtype)
 
     # Reassign the values to the array
     padded[0:m.shape[0], 0:m.shape[1]] = m
@@ -192,29 +190,29 @@ def fwhm_extractor(image, sat, i, print_psfs=False):
         fig, axs = plt.subplots(1, 3, figsize=(25, 20))
         interval = ZScaleInterval()                     
         vmin, vmax = interval.get_limits(zoomed_image)
-        im0 = axs[0].imshow(zoomed_image, vmin=vmin, vmax=vmax)
-        axs[0].set_title(''.join(['(Image ', str(i), ')', plot_string, ' Data']), size=20)
-        axs[0].text(22.5, 1, label, bbox={'facecolor': 'white', 'pad': 10})
+        im0 = axs[0].imshow(zoomed_image, vmin = vmin, vmax = vmax)
+        axs[0].set_title(''.join(['(Image ', str(i), ')', plot_string, ' Data']), size = 20)
+        axs[0].text(22.5, 1, label, bbox = {'facecolor': 'white', 'pad': 10})
 
         divider0 = make_axes_locatable(axs[0])
-        cax0 = divider0.append_axes("right", size="5%", pad=0.05)
-        plt.colorbar(im0, cax=cax0, ax=axs[0])
+        cax0 = divider0.append_axes("right", size = "5%", pad = 0.05)
+        plt.colorbar(im0, cax = cax0, ax = axs[0])
 
-        im1 = axs[1].imshow(f2(x2, y2), vmin=vmin, vmax=vmax)
-        axs[1].set_title(''.join(['(Image ', str(i), ')', plot_string, ' Model']), size=20)
-        axs[1].text(22.5, 1, label, bbox={'facecolor': 'white', 'pad': 10})
+        im1 = axs[1].imshow(f2(x2, y2), vmin = vmin, vmax = vmax)
+        axs[1].set_title(''.join(['(Image ', str(i), ')', plot_string, ' Model']), size = 20)
+        axs[1].text(22.5, 1, label, bbox = {'facecolor': 'white', 'pad': 10})
 
         divider1 = make_axes_locatable(axs[1])
-        cax1 = divider1.append_axes("right", size = "5%", pad=0.05)
-        plt.colorbar(im1, cax=cax1, ax=axs[1])
+        cax1 = divider1.append_axes("right", size = "5%", pad = 0.05)
+        plt.colorbar(im1, cax = cax1, ax = axs[1])
 
         vmin2, vmax2 = interval.get_limits(residual_image)
-        im2 = axs[2].imshow(residual_image, vmin=vmin2, vmax=vmax2)
-        axs[2].set_title(''.join(['(Image ', str(i), ')', plot_string, ' Residuals']), size=20)
+        im2 = axs[2].imshow(residual_image, vmin = vmin2, vmax = vmax2)
+        axs[2].set_title(''.join(['(Image ', str(i), ')', plot_string, ' Residuals']), size = 20)
 
         divider2 = make_axes_locatable(axs[2])
-        cax2 = divider2.append_axes("right", size="5%", pad=0.05)
-        plt.colorbar(im2, cax=cax2, ax=axs[2])
+        cax2 = divider2.append_axes("right", size = "5%", pad = 0.05)
+        plt.colorbar(im2, cax = cax2, ax = axs[2])
         # plt.savefig('/content/drive/My Drive/Julios Thesis Codes/Data/source_psf_image_' + str(i) + '.jpg', dpi = 400, bbox_inches = 'tight', rasterize = False)
         # filesorter('source_psf_image_' + str(i) + '.jpg', '/content/drive/My Drive/Julios Thesis Codes/Data/', 'movies')
     
@@ -276,7 +274,7 @@ def psf_model(image, sat, xcen, ycen, box_dim, i, print_psfs=False):
 
     # Cut out smaller box around PSF and pad to maintain square array
     sliced_image = float_image[ycen - stmpsz - 1: ycen + stmpsz, xcen - stmpsz - 1: xcen + stmpsz]
-    sliced_image_pad = pad_to_square(sliced_image, pad_value=0)
+    sliced_image_pad = pad_to_square(sliced_image, pad_value = 0)
     yp, xp = sliced_image_pad.shape
 
     # Generate grid of same size like box to put the fit on
@@ -329,27 +327,27 @@ def psf_model(image, sat, xcen, ycen, box_dim, i, print_psfs=False):
             fig, axs = plt.subplots(1, 3, figsize=(25, 20))
             interval = ZScaleInterval()                     
             vmin, vmax = interval.get_limits(sliced_image_pad)
-            im0 = axs[0].imshow(sliced_image_pad, vmin=vmin, vmax=vmax)
-            axs[0].set_title(''.join([plot_string, ' Data']), size=20)
+            im0 = axs[0].imshow(sliced_image_pad, vmin = vmin, vmax = vmax)
+            axs[0].set_title(''.join([plot_string, ' Data']), size = 20)
 
             divider0 = make_axes_locatable(axs[0])
-            cax0 = divider0.append_axes("right", size="5%", pad=0.05)
-            plt.colorbar(im0, cax=cax0, ax=axs[0])
+            cax0 = divider0.append_axes("right", size = "5%", pad = 0.05)
+            plt.colorbar(im0, cax = cax0, ax = axs[0])
 
-            im1 = axs[1].imshow(f(x, y), vmin=vmin, vmax=vmax)
-            axs[1].set_title(''.join([plot_string, ' Model']), size=20)
+            im1 = axs[1].imshow(f(x, y), vmin = vmin, vmax = vmax)
+            axs[1].set_title(''.join([plot_string, ' Model']), size = 20)
 
             divider1 = make_axes_locatable(axs[1])
-            cax1 = divider1.append_axes("right", size="5%", pad=0.05)
-            plt.colorbar(im1, cax=cax1, ax=axs[1])
+            cax1 = divider1.append_axes("right", size = "5%", pad = 0.05)
+            plt.colorbar(im1, cax = cax1, ax = axs[1])
 
             vmin2, vmax2 = interval.get_limits(psf_sub_image_pad)
-            im2 = axs[2].imshow(psf_sub_image_pad, vmin=vmin2, vmax=vmax2)
-            axs[2].set_title(''.join([plot_string, ' Residuals']), size=20)
+            im2 = axs[2].imshow(psf_sub_image_pad, vmin = vmin2, vmax = vmax2)
+            axs[2].set_title(''.join([plot_string, ' Residuals']), size = 20)
 
             divider2 = make_axes_locatable(axs[2])
-            cax2 = divider2.append_axes("right", size="5%", pad=0.05)
-            plt.colorbar(im2, cax=cax2, ax=axs[2])
+            cax2 = divider2.append_axes("right", size = "5%", pad = 0.05)
+            plt.colorbar(im2, cax = cax2, ax = axs[2])
             # plt.savefig('/content/drive/My Drive/Julios Thesis Codes/Data/central_psf_image_' + str(i) + '.jpg', dpi = 400, bbox_inches = 'tight', rasterize = False)
             # filesorter('central_psf_image_' + str(i) + '.jpg', '/content/drive/My Drive/Julios Thesis Codes/Data/', 'movies')
 
@@ -385,13 +383,13 @@ def bg_error_estimate(image, star_pos, box_dim, gain, sigma=4.0):
 
     # Slice the image around the source
     sliced_image = image[ycen - stmpsz - 1: ycen + stmpsz, xcen - stmpsz - 1: xcen + stmpsz]
-    sliced_image_pad = pad_to_square(sliced_image, pad_value=0)
+    sliced_image_pad = pad_to_square(sliced_image, pad_value = 0)
 
     # Remove pixels from the data that are above sigma times the standard deviation of the background
-    filtered_data  = sigma_clip(sliced_image_pad, sigma=sigma, copy=False)
+    filtered_data  = sigma_clip(sliced_image_pad, sigma = sigma, copy = False)
 
     # Take the filtered values and fill them with NaN's
-    bkg_values_nan = filtered_data.filled(fill_value=np.nan)
+    bkg_values_nan = filtered_data.filled(fill_value = np.nan)
 
     # Find the variance of all the remaining values (the values that have not been replaced with NaN's)
     bkg_error = np.sqrt(bkg_values_nan)
@@ -443,10 +441,10 @@ def photometry_extractor(image, error_image, sat, star_pos, model_fwhm, units, g
     star_pos_man = np.array([[image.shape[0]/2, image.shape[0]/2]])
     
     # Compute MAD of the background
-    bkg_mad = DataFrame(np.hstack(error_image)).mad(skipna=True)[0]
+    bkg_mad = DataFrame(np.hstack(error_image)).mad(skipna = True)[0]
         
     # Scan image for centroid
-    daofind = DAOStarFinder(fwhm=model_fwhm, threshold=3*bkg_mad, brightest=1, xycoords=star_pos_man)
+    daofind = DAOStarFinder(fwhm = model_fwhm, threshold = 3*bkg_mad, brightest = 1, xycoords = star_pos_man)
     sources = daofind(image)
 
     # True if the source isn't found by DAO
@@ -481,21 +479,17 @@ def photometry_extractor(image, error_image, sat, star_pos, model_fwhm, units, g
     #     f.close()
 
     # Define the aperture and sky radii
-    if (sat == 'N'):
-        r_aperture = 19*model_fwhm
-    else:
-        r_aperture = 1.5*model_fwhm
-    
+    r_aperture = 2.5*model_fwhm
     skyin  = r_aperture + 5
     skyout = skyin + 10
 
     # Create circular apertures and annuli with the specifed radii
-    starapertures = CircularAperture(star_pos0, r=r_aperture)
-    skyannuli  = CircularAnnulus (star_pos0, r_in=skyin, r_out=skyout)
+    starapertures = CircularAperture(star_pos0, r = r_aperture)
+    skyannuli  = CircularAnnulus (star_pos0, r_in = skyin, r_out = skyout)
     phot_apers = [starapertures, skyannuli]
 
     # Table containing photometry
-    phot_table = aperture_photometry(image, phot_apers, error=error_image, method='subpixel', subpixels=50)
+    phot_table = aperture_photometry(image, phot_apers, error = error_image, method = 'subpixel', subpixels = 50)
       
     # Calculate mean background in annulus and subtract from aperture flux
     bkg_mean  = phot_table['aperture_sum_1']/skyannuli.area
@@ -643,6 +637,12 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
 
         one_dataset = False
 
+    # Define empty lists of statistical values to be filled
+    median_list = []
+    std_list = []
+    peak_median_list = []
+    peak_std_list = []
+
     # Loop over all of the datasets
     for dataset in tupple:
 
@@ -663,6 +663,7 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
         # Pull the temporal data and the NaN mask from the dictionary for each specfic dataset
         time_def = time_data[''.join([object_name, '_', date])]['time (minutes since midnight)']
         time = [(i - np.nanmin(time_def)) for i in time_def]
+        wfe  = time_data[''.join([object_name, '_', date])]['Avg. WFE']
         nan_mask = time_data[''.join([object_name, '_', date])]['nan mask']
 
         # Wavelengths of the images
@@ -873,8 +874,22 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
         ###############################################################
 
         # Compile a list of all the data to be plotted and stored
-        dummy_data = [time*new_mask, line_flux*new_mask, line_flux_err*new_mask, cont_flux*new_mask, cont_flux_err*new_mask, 
-                      line_r, cont_r, line_peak, line_peak_err, cont_peak, cont_peak_err, peak_ratio, peak_ratio_err, ratio, ratio_err]
+        dummy_data = [time*new_mask, 
+                      line_flux*new_mask, 
+                      line_flux_err*new_mask, 
+                      cont_flux*new_mask, 
+                      cont_flux_err*new_mask, 
+                      wfe*new_mask,
+                      line_r, 
+                      cont_r, 
+                      line_peak, 
+                      line_peak_err, 
+                      cont_peak, 
+                      cont_peak_err, 
+                      peak_ratio, 
+                      peak_ratio_err, 
+                      ratio, 
+                      ratio_err]
 
         # Remove datapoints that are above 2*median
         clean_ratio = [np.nan if i > 2*np.nanmedian(ratio) else i for i in ratio]
@@ -895,13 +910,27 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
         ###############################################################
 
         # List of datasets to be plotted with new mask
-        data = [line_r*mask, cont_r*mask, line_peak*mask, cont_peak*mask, line_flux*mask, cont_flux*mask, peak_ratio*mask, clean_ratio]
+        data = [wfe*mask,
+                line_r*mask, 
+                cont_r*mask, 
+                line_peak*mask, 
+                cont_peak*mask, 
+                line_flux*mask, 
+                cont_flux*mask, 
+                peak_ratio*mask, 
+                clean_ratio]
 
         # Calculate the mean, median, and std of the data
-        median = np.nanmedian(clean_data[13])
-        std = np.nanstd(clean_data[13])
+        median = np.nanmedian(clean_data[14])
+        std = np.nanstd(clean_data[14])
         peak_median = np.nanmedian(clean_data[12])
         peak_std = np.nanstd(clean_data[12])
+
+        # Calculate the statistical values
+        median_list.append(round(median, 2))
+        std_list.append(round(std, 2))
+        peak_median_list.append(round(peak_median, 2))
+        peak_std_list.append(round(peak_std, 2))
 
         # Write data to a dictionary
         inner_dict = {               'time (minutes)':  clean_data[0], 
@@ -909,25 +938,27 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
                                  'H-alpha Flux Error':  clean_data[2],
                                          'Cont. Flux':  clean_data[3], 
                                    'Cont. Flux Error':  clean_data[4],
-                              'H-alpha FWHM (pixels)':  clean_data[5], 
-                                'Cont. FWHM (pixels)':  clean_data[6], 
-                                  'H-alpha Starpeaks':  clean_data[7],
-                            'H-alpha Starpeaks Error':  clean_data[8], 
-                                    'Cont. Starpeaks':  clean_data[9],
-                              'Cont. Starpeaks Error':  clean_data[10],
-                                    'Starpeaks Ratio':  clean_data[11], 
-                              'Starpeaks Ratio Error':  clean_data[12],
-                                'H-alpha-Cont. Ratio':  clean_data[13], 
-                          'H-alpha-Cont. Ratio Error':  clean_data[14]}
+                                           'Avg. WFE':  clean_data[5],
+                              'H-alpha FWHM (pixels)':  clean_data[6], 
+                                'Cont. FWHM (pixels)':  clean_data[7], 
+                                  'H-alpha Starpeaks':  clean_data[8],
+                            'H-alpha Starpeaks Error':  clean_data[9], 
+                                    'Cont. Starpeaks':  clean_data[10],
+                              'Cont. Starpeaks Error':  clean_data[11],
+                                    'Starpeaks Ratio':  clean_data[12], 
+                              'Starpeaks Ratio Error':  clean_data[13],
+                                'H-alpha-Cont. Ratio':  clean_data[14], 
+                          'H-alpha-Cont. Ratio Error':  clean_data[15]}
 
         # Define outer dictionary to store all of the indivual datasets
         data_dictionary = {''.join([object_name, '_', date]): inner_dict}
 
         # Define the colors and labels for plots
-        colors = ['co', 'co', 'ro', 'ro', 'bo', 'bo', 'mo', 'mo']
-        color_scatter = ['cyan', 'cyan', 'red', 'red', 'blue', 'blue', 'magenta', 'magenta']
+        colors = ['ko', 'co', 'co', 'ro', 'ro', 'bo', 'bo', 'mo', 'mo']
+        color_scatter = ['black', 'cyan', 'cyan', 'red', 'red', 'blue', 'blue', 'magenta', 'magenta']
  
-        ylabels = [ r'Line FWHM (pixels)', 
+        ylabels = [ r'Avg. WFE',
+                    r'Line FWHM (pixels)', 
                     r'Cont. FWHM (pixels)',  
                     r'H$\alpha$ Peak Pixel (' + u + ')', 
                     r'Cont. Peak Pixel (' + u + ')', 
@@ -937,10 +968,11 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
                     r'H$\alpha$/Cont.']
 
         # List of strings for plotting labels
-        plot_label = [ r'Moffat FWHM for H$\alpha$ Images', 
-                        'Moffat FWHM for Cont. Images',
+        plot_label = [ r'Avg. WFE',
+                       r'Moffat FWHM for H$\alpha$ Images', 
+                       r'Moffat FWHM for Cont. Images',
                        r'Peak Pixel Values in H$\alpha$ Images',
-                        'Peak Pixel Values in Cont. Images',
+                       r'Peak Pixel Values in Cont. Images',
                        r'Where H$\alpha$ is measured at 656 nm',
                        r'Where Cont. is measured at 643 nm',
                        r'Peak H$\alpha$/Cont. Ratio',
@@ -948,69 +980,35 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
 
         # True if MAG1 Seeing data exists
         if 'MAG Seeing' in list(time_data[''.join([object_name, '_', date])].keys()):
+    
+            # Store all the data in a list and replace any nonphysical seeing values with NaN
+            mag = time_data[''.join([object_name, '_', date])]['MAG Seeing']*new_mask
+            mag = [np.nan if i == -1 else i for i in mag]
+        
+            # True if all the seeing values were NaN
+            if (all(np.isnan(i) for i in mag) != True):
+                data.insert(0, mag)
+                colors.insert(0, 'go')
+                color_scatter.insert(0, 'green')
+                ylabels.insert(0, 'MAG1 Seeing')
+                plot_label.insert(0, 'MAG1 Instrument')
+                inner_dict['MAG1 Seeing (arcseconds)'] = mag
 
-            # True if the MAG1 and DIMM seeing data exists
-            if 'DIMM Seeing' in list(time_data[''.join([object_name, '_', date])].keys()):
+        # True if the MAG1 and DIMM seeing data exists
+        if 'DIMM Seeing' in list(time_data[''.join([object_name, '_', date])].keys()):
 
-                # Store all the data in a list and replace any nonphysical seeing values with NaN
-                mag  = time_data[''.join([object_name, '_', date])]['MAG Seeing']  * new_mask
-                mag  = [np.nan if i == -1 else i for i in mag]
+            # Store all the data in a list and replace any nonphysical seeing values with NaN
+            dimm = time_data[''.join([object_name, '_', date])]['DIMM Seeing']*new_mask
+            dimm = [np.nan if i == -1 else i for i in dimm]
 
-                dimm = time_data[''.join([object_name, '_', date])]['DIMM Seeing'] * new_mask
-                dimm = [np.nan if i == -1 else i for i in dimm]
-
-                # True if all the seeing values were NaN
-                if (all(np.isnan(i) for i in dimm) != True):
-                    data.insert(0, dimm)
-                    colors.insert(0, 'go')
-                    color_scatter.insert(0, 'green')
-                    ylabels.insert(0, 'DIMM Seeing (arcseconds)')
-                    plot_label.insert(0, 'DIMM Instrument')
-                    inner_dict['DIMM Instrument'] = dimm
-
-                # True if all the seeing values were NaN
-                if (all(np.isnan(i) for i in mag) != True):
-                    data.insert(0, mag)
-                    colors.insert(0, 'go')
-                    color_scatter.insert(0, 'green')
-                    ylabels.insert(0, 'MAG1 Seeing (arcseconds)')
-                    plot_label.insert(0, 'MAG1 Instrument')
-                    inner_dict['MAG1 Seeing (arcseconds)'] = mag
-
-            # True if the MAG1 seeing data ecists and the DIMM seeing data does NOT exist
-            else:
-
-                # Store all the data in a list
-                mag = time_data[''.join([object_name, '_', date])]['MAG Seeing'] * new_mask
-                mag = [np.nan if i == -1 else i for i in mag]
-
-                # True if all the seeing values were NaN
-                if (all(np.isnan(i) for i in mag) != True):
-                    data.insert(0, mag)
-                    colors.insert(0, 'go')
-                    color_scatter.insert(0, 'green')
-                    ylabels.insert(0, 'MAG1 Seeing (arcseconds)')
-                    plot_label.insert(0, 'MAG1 Instrument')
-                    inner_dict['MAG1 Seeing (arcseconds)'] = mag
-                
-        # True if the MAG1 seeing data does NOT exist
-        else:
-
-            # True if the MAG1 seeing does NOT exist but the DIMM seeing data does exist
-            if 'DIMM Seeing' in list(time_data[''.join([object_name, '_', date])].keys()):
-
-                # Store all the data in a list
-                dimm = time_data[''.join([object_name, '_', date])]['DIMM Seeing']*new_mask
-                dimm = [np.nan if i == -1 else i for i in dimm]
-
-                # True if all the seeing values were NaN
-                if (all(np.isnan(i) for i in dimm) != True):
-                    data.insert(0, dimm)
-                    colors.insert(0, 'go')
-                    color_scatter.insert(0, 'green')
-                    ylabels.insert(0, 'DIMM Seeing (arcseconds)')
-                    plot_label.insert(0, 'DIMM Instrument')
-                    inner_dict['DIMM Instrument'] = dimm
+            # True if all the seeing values were NaN
+            if (all(np.isnan(i) for i in dimm) != True):
+                data.insert(0, dimm)
+                colors.insert(0, 'go')
+                color_scatter.insert(0, 'green')
+                plot_label.insert(0, 'DIMM Instrument')
+                ylabels.insert(0, 'DIMM Seeing')
+                inner_dict['DIMM Seeing (arcseconds)'] = dimm
 
         # Set the title of the plot for saturated and nonsaturated cases
         if def_sat == 'Y':
@@ -1026,7 +1024,7 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
 
         # Plot the Photometry Ratio
         plt.figure(figsize = (40, 10))
-        plt.errorbar(clean_data[0], clean_data[13], clean_data[14], fmt = 'mo', markersize = 3, capsize = 5, label = r'Where H$\alpha$ and the Cont. are measured at 656 nm and 643 nm respectively')
+        plt.errorbar(clean_data[0], clean_data[14], clean_data[15], fmt = 'mo', markersize = 3, capsize = 5, label = r'Where H$\alpha$ and the Cont. are measured at 656 nm and 643 nm respectively')
         plt.hlines(median, xmin = np.nanmin(clean_data[0]), xmax = np.nanmax(clean_data[0]), colors = 'blue', linestyles = '--', linewidth = 2, label = f'Median Ratio = {median:.2f} +/- {std:.2f}')
 
         # Set the scale of the figure based on saturation status
@@ -1040,10 +1038,12 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
         plt.title(plot_title)
         plt.legend(loc = 'best')
         plt.tight_layout()
+        plt.savefig(''.join([dataframedir, plot_title, '.jpg']), dpi = 400, bbox_inches = 'tight', rasterize = False)
+        filesorter(''.join([plot_title, '.jpg']), dataframedir, ''.join([object_name, '/', date]))  
 
         # Plot the peak ratio
         plt.figure(figsize = (40, 10))
-        plt.errorbar(clean_data[0], clean_data[11], clean_data[12], fmt = 'mo', markersize = 3, capsize = 5, label = r'Where H$\alpha$ and the Cont. are measured at 656 nm and 643 nm respectively')
+        plt.errorbar(clean_data[0], clean_data[12], clean_data[13], fmt = 'mo', markersize = 3, capsize = 5, label = r'Where H$\alpha$ and the Cont. are measured at 656 nm and 643 nm respectively')
         plt.hlines(peak_median, xmin = np.nanmin(clean_data[0]), xmax = np.nanmax(clean_data[0]), colors = 'blue', linestyles = '--', linewidth = 2, label = f'Median Ratio = {peak_median:.2f} +/- {peak_std:.2f}')
 
         # Set the scale of the figure based on saturation status
@@ -1057,6 +1057,8 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
         plt.title(plot_title)
         plt.legend(loc = 'best')
         plt.tight_layout()
+        plt.savefig(''.join([dataframedir, plot_title, '_peak.jpg']), dpi = 400, bbox_inches = 'tight', rasterize = False)
+        filesorter(''.join([plot_title, '_peak.jpg']), dataframedir, ''.join([object_name, '/', date]))
 
         # Define the figure for all of the values to be plotted on
         fig, axs = plt.subplots(len(data), sharex = True, sharey = False, figsize = (55, 35))
@@ -1076,7 +1078,6 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
         fig.supxlabel('time (minutes)')
         fig.tight_layout()
         fig.savefig(''.join([dataframedir, plot_title, '_stacked.jpg']), dpi = 400, bbox_inches = 'tight', rasterize = False)   
-        fig.show()
         filesorter(''.join([plot_title, '_stacked.jpg']), dataframedir, ''.join([object_name, '/', date]))
         print('\n')
 
@@ -1088,14 +1089,14 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
         if (one_dataset == True):
 
             # Stack the info
-            stacked_info = np.column_stack((median, std, peak_median, peak_std))
+            stacked_info = np.column_stack((median_list, std_list, peak_median_list, peak_std_list))
 
             # Place all the info into a dataframe and append to empty previously existing dataframe
             info = DataFrame(stacked_info, columns = ['Ratio Median', 'Ratio Standard Deviation.', 'Peak Ratio Median', 'Peak Ratio Standard Deviation'])
             stat_dataframe = concat([dataframe, info], axis = 1)
 
             # Write the statsistics to a dataframe
-            stat_dataframe.to_csv(''.join([dataframedir, object_name, '/', date, '/', object_name, '_', date, '_Photometric_Statistics.csv']), index = False)
+            stat_dataframe.to_csv(''.join([dataframedir, object_name, '_', date, '_Photometric_Statistics.csv']), index = False)
 
             # Save the data and break the loop after we're done with the single dataset
             print('Done Extracting Photometry! \n')
@@ -1107,7 +1108,7 @@ def Aperture_Photometry(dataframedir, dataframename, timestampsdir, object_name=
             return np.save(''.join([dataframedir, object_name, '/', date, '/', object_name, '_', date, '_Photometric_Data.npy']), dictionary)
 
     # Stack the info
-    stacked_info = np.column_stack((median, std, peak_median, peak_std))
+    stacked_info = np.column_stack((median_list, std_list, peak_median_list, peak_std_list))
 
     # Place all the info into a dataframe and append to empty previously existing dataframe
     info = DataFrame(stacked_info, columns = ['Ratio Median', 'Ratio Standard Deviation.', 'Peak Ratio Median', 'Peak Ratio Standard Deviation'])
